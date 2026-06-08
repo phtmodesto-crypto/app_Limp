@@ -1,0 +1,111 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-primary: #1A3FA0;
+    --color-secondary: #29ABE2;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-brand-surface text-slate-800 antialiased;
+  }
+
+  * {
+    @apply box-border;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-navy-600 hover:bg-navy-700 active:bg-navy-800 text-white font-semibold
+           px-6 py-3 rounded-xl transition-all duration-200 disabled:opacity-50
+           disabled:cursor-not-allowed focus:outline-none focus:ring-4 focus:ring-navy-100
+           shadow-sm hover:shadow-md;
+  }
+
+  .btn-secondary {
+    @apply bg-white hover:bg-slate-50 text-navy-600 font-semibold border border-slate-200
+           px-6 py-3 rounded-xl transition-all duration-200 disabled:opacity-50
+           disabled:cursor-not-allowed focus:outline-none focus:ring-4 focus:ring-navy-100
+           shadow-sm hover:shadow-md;
+  }
+
+  .btn-outline {
+    @apply border-2 border-navy-600 text-navy-600 hover:bg-navy-600 hover:text-white
+           font-semibold px-6 py-3 rounded-xl transition-all duration-200
+           disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none
+           focus:ring-4 focus:ring-navy-100;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 border border-slate-200 rounded-xl text-slate-800
+           placeholder:text-slate-400 bg-white transition-all duration-200
+           focus:outline-none focus:ring-4 focus:ring-navy-100 focus:border-navy-400
+           disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed
+           hover:border-slate-300;
+  }
+
+  .input-error {
+    @apply border-red-400 focus:ring-red-100 focus:border-red-400;
+  }
+
+  .label-field {
+    @apply block text-sm font-semibold text-slate-700 mb-1.5;
+  }
+
+  .error-msg {
+    @apply text-red-500 text-sm mt-1 flex items-center gap-1;
+  }
+
+  .card {
+    @apply bg-white rounded-2xl border border-slate-100 shadow-card p-6;
+  }
+
+  .step-card {
+    @apply bg-white rounded-2xl border border-slate-100 shadow-step p-6 md:p-8
+           animate-slide-up;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border;
+  }
+
+  .badge-destaque {
+    @apply text-emerald-700 bg-emerald-50 border-emerald-200;
+  }
+
+  .badge-adequado {
+    @apply text-blue-700 bg-blue-50 border-blue-200;
+  }
+
+  .badge-analise {
+    @apply text-amber-700 bg-amber-50 border-amber-200;
+  }
+}
+
+/* Scrollbar customizada */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Rating stars */
+.star-rating input[type="radio"] {
+  display: none;
+}

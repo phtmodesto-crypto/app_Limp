@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Candidatura {
+  id        String   @id @default(cuid())
+  protocolo String   @unique
+
+  // Dados pessoais
+  nomeCompleto String
+  dataNasc     String
+  telefone     String
+  whatsapp     String?
+  email        String
+  cidade       String
+  estado       String
+
+  // Vaga de interesse
+  cargo             String
+  turno             String  // JSON: string[]
+  pretensaoSalarial Float?
+
+  // Experiência profissional (JSON serializado)
+  experiencias String // JSON: Experiencia[]
+
+  // Formação e cursos (JSON serializado)
+  escolaridade String
+  cursos       String // JSON: Curso[]
+
+  // Autoavaliação (JSON serializado) e pontuações
+  autoavaliacao  String // JSON: Record<string, number>
+  pontuacaoAuto  Float  // pontuação da autoavaliação (0-60)
+  pontuacaoCompl Float  // pontuação de completude (0-40)
+  pontuacaoTotal Float  // total (0-100)
+  classificacao  String // "Perfil em Destaque" | "Perfil Adequado" | "Em Análise"
+
+  // Currículo uploadado
+  curriculoUrl   String?
+  curriculoNome  String?
+  curriculoTipo  String?
+  curriculoTamanho Int?
+
+  // LGPD
+  lgpdAceite   Boolean
+  lgpdDataHora DateTime
+
+  // Status da candidatura
+  status          String @default("NOVO") // NOVO | EM_ANALISE | ENTREVISTA | APROVADO | REPROVADO
+  statusHistorico String @default("[]")  // JSON: StatusEntry[]
+
+  // Metadados técnicos
+  ipOrigem  String?
+  userAgent String?
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // LGPD - anonimização
+  anonimizado    Boolean   @default(false)
+  anonimizadoEm DateTime?
+  anonimizadoPor String?
+}
+
+model Admin {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  nome      String
+  senha     String   // bcrypt hash
+  ativo     Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
