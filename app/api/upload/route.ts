@@ -1,7 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
-import { v4 as uuid } from "uuid";
 
 const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
 const ALLOWED_TYPES = [
@@ -9,6 +6,11 @@ const ALLOWED_TYPES = [
   "application/msword",
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 ];
+
+// Detecta se o ambiente tem Supabase configurado
+const USE_SUPABASE_STORAGE =
+  !!process.env.NEXT_PUBLIC_SUPABASE_URL &&
+  !!process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 export async function POST(request: NextRequest) {
   try {
@@ -28,23 +30,59 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const ext = file.name.split(".").pop()?.toLowerCase() || "pdf";
-    const novoNome = `${uuid()}.${ext}`;
+    if (USE_SUPABASE_STORAGE) {
+      return await uploadSupabase(file);
+    }
 
-    // Em desenvolvimento: salva em public/uploads/
-    // Em produção: substitua por Vercel Blob ou S3
-    const uploadDir = path.join(process.cwd(), "public", "uploads");
-    await mkdir(uploadDir, { recursive: true });
-
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    await writeFile(path.join(uploadDir, novoNome), buffer);
-
-    const url = `/uploads/${novoNome}`;
-
-    return NextResponse.json({ url, nome: file.name, tipo: file.type, tamanho: file.size });
+    return await uploadLocal(file);
   } catch (error) {
     console.error("Erro no upload:", error);
     return NextResponse.json({ error: "Erro interno no upload" }, { status: 500 });
   }
+}
+
+// ─── Supabase Storage ─────────────────────────────────────────────────────────
+
+async function uploadSupabase(file: File) {
+  const { uploadCurriculo } = await import("@/lib/supabase/storage");
+
+  // ID temporário para organizar o arquivo no bucket antes de salvar a candidatura
+  const tempId = `tmp-${Date.now()}`;
+  const result = await uploadCurriculo(file, tempId);
+
+  return NextResponse.json({
+    url: result.url,
+    path: result.path,
+    nome: result.nome,
+    tipo: result.tipo,
+    tamanho: result.tamanho,
+    provider: "supabase",
+  });
+}
+
+// ─── Armazenamento local (desenvolvimento) ────────────────────────────────────
+
+async function uploadLocal(file: File) {
+  const { writeFile, mkdir } = await import("fs/promises");
+  const path = await import("path");
+  const { v4: uuid } = await import("uuid");
+
+  const ext = file.name.split(".").pop()?.toLowerCase() || "pdf";
+  const novoNome = `${uuid()}.${ext}`;
+
+  const uploadDir = path.join(process.cwd(), "public", "uploads");
+  await mkdir(uploadDir, { recursive: true });
+
+  const bytes = await file.arrayBuffer();
+  const buffer = Buffer.from(bytes);
+  await writeFile(path.join(uploadDir, novoNome), buffer);
+
+  return NextResponse.json({
+    url: `/uploads/${novoNome}`,
+    path: novoNome,
+    nome: file.name,
+    tipo: file.type,
+    tamanho: file.size,
+    provider: "local",
+  });
 }

@@ -79,10 +79,10 @@ export default async function AdminDashboard() {
   const stats = await getStats();
 
   const statusMap = Object.fromEntries(
-    stats.porStatus.map((s) => [s.status, s._count])
+    (stats.porStatus as { status: string; _count: number }[]).map((s) => [s.status, s._count])
   );
   const classifMap = Object.fromEntries(
-    stats.porClassificacao.map((c) => [c.classificacao, c._count])
+    (stats.porClassificacao as { classificacao: string; _count: number }[]).map((c) => [c.classificacao, c._count])
   );
 
   return (
@@ -207,7 +207,7 @@ export default async function AdminDashboard() {
             <Briefcase className="w-4 h-4" /> Top Vagas
           </h2>
           <div className="space-y-2">
-            {stats.porCargo.map((c) => (
+            {(stats.porCargo as { cargo: string; _count: number }[]).map((c) => (
               <div key={c.cargo} className="flex items-center justify-between text-sm">
                 <span className="text-slate-600 truncate mr-2">{c.cargo}</span>
                 <span className="font-bold text-navy-600 flex-shrink-0">{c._count}</span>
@@ -237,7 +237,7 @@ export default async function AdminDashboard() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
-              {stats.recentes.map((c) => (
+              {(stats.recentes as { id: string; protocolo: string; nomeCompleto: string; cargo: string; pontuacaoTotal: number; classificacao: string; status: string; createdAt: Date }[]).map((c) => (
                 <tr key={c.id} className="hover:bg-slate-50 transition-colors">
                   <td className="py-2.5 pr-3">
                     <Link href={`/admin/candidatos/${c.id}`} className="font-medium text-slate-700 hover:text-navy-600 transition-colors">

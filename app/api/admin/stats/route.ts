@@ -7,13 +7,7 @@ export async function GET() {
   const session = await getServerSession(authOptions);
   if (!session) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
 
-  const [
-    total,
-    porStatus,
-    porClassificacao,
-    porCargo,
-    novosMes,
-  ] = await Promise.all([
+  const [total, porStatus, porClassificacao, porCargo, novosMes] = await Promise.all([
     prisma.candidatura.count({ where: { anonimizado: false } }),
     prisma.candidatura.groupBy({
       by: ["status"],
@@ -35,18 +29,25 @@ export async function GET() {
     prisma.candidatura.count({
       where: {
         anonimizado: false,
-        createdAt: { gte: new Date(new Date().setDate(1)) }, // primeiro dia do mês
+        createdAt: { gte: new Date(new Date().setDate(1)) },
       },
     }),
   ]);
 
+  // Prisma groupBy retorna array tipado; cast explícito para satisfazer o strict mode
+  type GbStatus = { status: string; _count: number };
+  type GbClassif = { classificacao: string; _count: number };
+  type GbCargo  = { cargo: string;  _count: number };
+
   return NextResponse.json({
     total,
     novosMes,
-    porStatus: Object.fromEntries(porStatus.map((s) => [s.status, s._count])),
-    porClassificacao: Object.fromEntries(
-      porClassificacao.map((c) => [c.classificacao, c._count])
+    porStatus: Object.fromEntries(
+      (porStatus as GbStatus[]).map((s) => [s.status, s._count])
     ),
-    porCargo: porCargo.map((c) => ({ cargo: c.cargo, total: c._count })),
+    porClassificacao: Object.fromEntries(
+      (porClassificacao as GbClassif[]).map((c) => [c.classificacao, c._count])
+    ),
+    porCargo: (porCargo as GbCargo[]).map((c) => ({ cargo: c.cargo, total: c._count })),
   });
 }

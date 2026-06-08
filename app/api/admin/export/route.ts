@@ -13,10 +13,12 @@ export async function GET(request: NextRequest) {
   const status = searchParams.get("status") || "";
   const classificacao = searchParams.get("classificacao") || "";
 
-  const where: Record<string, unknown> = { anonimizado: false };
-  if (cargo) where.cargo = cargo;
-  if (status) where.status = status;
-  if (classificacao) where.classificacao = classificacao;
+  const where = {
+    anonimizado: false,
+    ...(cargo && { cargo }),
+    ...(status && { status }),
+    ...(classificacao && { classificacao }),
+  };
 
   const candidaturas = await prisma.candidatura.findMany({
     where,
@@ -41,7 +43,14 @@ export async function GET(request: NextRequest) {
     },
   });
 
-  const rows = candidaturas.map((c) => ({
+  type ExportRow = {
+    protocolo: string; nomeCompleto: string; email: string; telefone: string;
+    cidade: string; estado: string; cargo: string; turno: string;
+    pretensaoSalarial: number | null; escolaridade: string;
+    pontuacaoTotal: number; classificacao: string; status: string;
+    curriculoUrl: string | null; lgpdDataHora: Date; createdAt: Date;
+  };
+  const rows = (candidaturas as ExportRow[]).map((c) => ({
     Protocolo: c.protocolo,
     Nome: c.nomeCompleto,
     "E-mail": c.email,

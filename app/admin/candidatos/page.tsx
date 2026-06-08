@@ -30,6 +30,22 @@ const STATUS_LABEL: Record<string, string> = {
   REPROVADO: "Reprovado",
 };
 
+type CandidatoRow = {
+  id: string;
+  protocolo: string;
+  nomeCompleto: string;
+  email: string;
+  telefone: string;
+  cidade: string;
+  estado: string;
+  cargo: string;
+  pontuacaoTotal: number;
+  classificacao: string;
+  status: string;
+  curriculoUrl: string | null;
+  createdAt: Date;
+};
+
 const CARGOS = [
   "Auxiliar de Limpeza",
   "Auxiliar de Serviços Gerais",
@@ -58,18 +74,20 @@ async function getCandidatos(searchParams: Record<string, string>) {
   const pg = parseInt(pagina);
   const porPagina = 20;
 
-  const where: Record<string, unknown> = { anonimizado: false };
-  if (cargo) where.cargo = cargo;
-  if (status) where.status = status;
-  if (classificacao) where.classificacao = classificacao;
-  if (cidade) where.cidade = { contains: cidade };
-  if (busca) {
-    where.OR = [
-      { nomeCompleto: { contains: busca } },
-      { email: { contains: busca } },
-      { protocolo: { contains: busca } },
-    ];
-  }
+  const where = {
+    anonimizado: false,
+    ...(cargo && { cargo }),
+    ...(status && { status }),
+    ...(classificacao && { classificacao }),
+    ...(cidade && { cidade: { contains: cidade } }),
+    ...(busca && {
+      OR: [
+        { nomeCompleto: { contains: busca } },
+        { email: { contains: busca } },
+        { protocolo: { contains: busca } },
+      ],
+    }),
+  };
 
   const [total, candidatos] = await Promise.all([
     prisma.candidatura.count({ where }),
@@ -233,7 +251,7 @@ export default async function CandidatosPage({
                   </td>
                 </tr>
               ) : (
-                candidatos.map((c) => (
+                (candidatos as CandidatoRow[]).map((c) => (
                   <tr key={c.id} className="hover:bg-slate-50 transition-colors">
                     <td className="px-4 py-3">
                       <Link href={`/admin/candidatos/${c.id}`} className="block">

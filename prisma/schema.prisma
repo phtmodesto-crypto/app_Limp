@@ -2,9 +2,23 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// ─── Banco de dados ───────────────────────────────────────────────────────────
+// Desenvolvimento local → SQLite  (DATABASE_URL="file:./dev.db")
+// Produção / Supabase  → PostgreSQL (veja .env.example)
+//
+// Para alternar:
+//   1. Atualize o DATABASE_URL no .env
+//   2. Troque "sqlite" por "postgresql" abaixo
+//   3. Adicione directUrl = env("DIRECT_URL") para Supabase com pooler
+//   4. Execute: npx prisma db push  (ou prisma migrate deploy em produção)
+
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "sqlite"
+  url       = env("DATABASE_URL")
+  // Descomente as linhas abaixo ao usar Supabase (PostgreSQL):
+  // provider  = "postgresql"
+  // url       = env("DATABASE_URL")
+  // directUrl = env("DIRECT_URL")
 }
 
 model Candidatura {
@@ -40,10 +54,13 @@ model Candidatura {
   classificacao  String // "Perfil em Destaque" | "Perfil Adequado" | "Em Análise"
 
   // Currículo uploadado
-  curriculoUrl   String?
-  curriculoNome  String?
-  curriculoTipo  String?
+  curriculoUrl     String?
+  curriculoNome    String?
+  curriculoTipo    String?
   curriculoTamanho Int?
+
+  // Caminho no Supabase Storage (quando usar lib/supabase/storage.ts)
+  curriculoStoragePath String?
 
   // LGPD
   lgpdAceite   Boolean
@@ -51,7 +68,7 @@ model Candidatura {
 
   // Status da candidatura
   status          String @default("NOVO") // NOVO | EM_ANALISE | ENTREVISTA | APROVADO | REPROVADO
-  statusHistorico String @default("[]")  // JSON: StatusEntry[]
+  statusHistorico String @default("[]")   // JSON: StatusEntry[]
 
   // Metadados técnicos
   ipOrigem  String?
@@ -61,9 +78,9 @@ model Candidatura {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // LGPD - anonimização
+  // LGPD — anonimização
   anonimizado    Boolean   @default(false)
-  anonimizadoEm DateTime?
+  anonimizadoEm  DateTime?
   anonimizadoPor String?
 }
 
