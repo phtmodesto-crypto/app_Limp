@@ -7,8 +7,10 @@ const ALLOWED_TYPES = [
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 ];
 
-// Detecta se o ambiente tem Supabase configurado
+// Usa Supabase Storage apenas quando explicitamente habilitado via env
+// Em desenvolvimento (USE_SUPABASE_STORAGE != "true") salva em public/uploads
 const USE_SUPABASE_STORAGE =
+  process.env.USE_SUPABASE_STORAGE === "true" &&
   !!process.env.NEXT_PUBLIC_SUPABASE_URL &&
   !!process.env.SUPABASE_SERVICE_ROLE_KEY;
 
