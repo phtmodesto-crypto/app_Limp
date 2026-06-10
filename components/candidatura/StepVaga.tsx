@@ -23,8 +23,6 @@ const cargos = [
 ];
 
 const turnos = [
-  { value: "Manhã (06h–14h)", label: "Manhã", desc: "06h às 14h" },
-  { value: "Tarde (14h–22h)", label: "Tarde", desc: "14h às 22h" },
   { value: "Noite (22h–06h)", label: "Noite", desc: "22h às 06h" },
   { value: "Comercial", label: "Comercial", desc: "08h às 18h" },
   { value: "12×36 diurno", label: "12×36 Diurno", desc: "Escala 12×36, dia" },
