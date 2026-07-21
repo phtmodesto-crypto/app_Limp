@@ -13,15 +13,14 @@
 
 ALTER TABLE "Candidatura" ENABLE ROW LEVEL SECURITY;
 
--- Bloqueia todo acesso público (anon key)
--- Apenas service_role (usado pelo Prisma no servidor) acessa esta tabela
+DROP POLICY IF EXISTS "candidatura_noaccess_anon" ON "Candidatura";
 CREATE POLICY "candidatura_noaccess_anon"
   ON "Candidatura"
   FOR ALL
   TO anon
   USING (false);
 
--- Nenhum acesso autenticado via JWT Supabase (usamos NextAuth separado)
+DROP POLICY IF EXISTS "candidatura_noaccess_authenticated" ON "Candidatura";
 CREATE POLICY "candidatura_noaccess_authenticated"
   ON "Candidatura"
   FOR ALL
@@ -33,13 +32,14 @@ CREATE POLICY "candidatura_noaccess_authenticated"
 
 ALTER TABLE "Admin" ENABLE ROW LEVEL SECURITY;
 
--- Bloqueia completamente — senhas bcrypt armazenadas aqui
+DROP POLICY IF EXISTS "admin_noaccess_anon" ON "Admin";
 CREATE POLICY "admin_noaccess_anon"
   ON "Admin"
   FOR ALL
   TO anon
   USING (false);
 
+DROP POLICY IF EXISTS "admin_noaccess_authenticated" ON "Admin";
 CREATE POLICY "admin_noaccess_authenticated"
   ON "Admin"
   FOR ALL

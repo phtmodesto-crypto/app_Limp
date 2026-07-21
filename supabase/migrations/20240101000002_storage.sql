@@ -25,36 +25,35 @@ ON CONFLICT (id) DO UPDATE SET
 
 -- ─── Políticas de Storage ────────────────────────────────────────────────────
 
--- UPLOAD: apenas o próprio sistema (service_role) pode fazer upload
--- Anon e authenticated não têm acesso de escrita
+DROP POLICY IF EXISTS "curriculos_upload_service_only" ON storage.objects;
 CREATE POLICY "curriculos_upload_service_only"
   ON storage.objects
   FOR INSERT
   TO service_role
   WITH CHECK (bucket_id = 'curriculos');
 
--- LEITURA: apenas service_role pode ler (download, signed URL)
+DROP POLICY IF EXISTS "curriculos_read_service_only" ON storage.objects;
 CREATE POLICY "curriculos_read_service_only"
   ON storage.objects
   FOR SELECT
   TO service_role
   USING (bucket_id = 'curriculos');
 
--- DELEÇÃO: apenas service_role pode deletar (anonimização LGPD)
+DROP POLICY IF EXISTS "curriculos_delete_service_only" ON storage.objects;
 CREATE POLICY "curriculos_delete_service_only"
   ON storage.objects
   FOR DELETE
   TO service_role
   USING (bucket_id = 'curriculos');
 
--- Bloqueia acesso anon ao bucket
+DROP POLICY IF EXISTS "curriculos_deny_anon" ON storage.objects;
 CREATE POLICY "curriculos_deny_anon"
   ON storage.objects
   FOR ALL
   TO anon
   USING (false);
 
--- Bloqueia acesso authenticated direto ao bucket
+DROP POLICY IF EXISTS "curriculos_deny_authenticated" ON storage.objects;
 CREATE POLICY "curriculos_deny_authenticated"
   ON storage.objects
   FOR ALL
