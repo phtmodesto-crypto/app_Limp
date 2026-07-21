@@ -13,12 +13,9 @@ generator client {
 //   4. Execute: npx prisma db push  (ou prisma migrate deploy em produção)
 
 datasource db {
-  provider  = "sqlite"
+  provider  = "postgresql"
   url       = env("DATABASE_URL")
-  // Descomente as linhas abaixo ao usar Supabase (PostgreSQL):
-  // provider  = "postgresql"
-  // url       = env("DATABASE_URL")
-  // directUrl = env("DIRECT_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Candidatura {

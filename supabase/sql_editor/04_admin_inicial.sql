@@ -17,9 +17,10 @@
 INSERT INTO "Admin" ("id", "email", "nome", "senha", "ativo")
 VALUES (
   gen_random_uuid()::text,
-  'admin@limpservice.com.br',           -- << TROQUE pelo seu e-mail
-  'Administrador RH',                   -- << TROQUE pelo nome
-  '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'  -- senha: Admin@2024
+  'vagas@limpserviceservicos.com.br',
+  'RH Limpservice',
+  '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', -- senha: Admin@2024
+  true
 )
 ON CONFLICT DO NOTHING;
 

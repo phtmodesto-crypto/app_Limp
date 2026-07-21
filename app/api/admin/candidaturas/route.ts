@@ -28,12 +28,12 @@ export async function GET(request: NextRequest) {
   if (cargo) where.cargo = cargo;
   if (status) where.status = status;
   if (classificacao) where.classificacao = classificacao;
-  if (cidade) where.cidade = { contains: cidade };
+  if (cidade) where.cidade = { contains: cidade, mode: "insensitive" };
   if (busca) {
     where.OR = [
-      { nomeCompleto: { contains: busca } },
-      { email: { contains: busca } },
-      { protocolo: { contains: busca } },
+      { nomeCompleto: { contains: busca, mode: "insensitive" } },
+      { email: { contains: busca, mode: "insensitive" } },
+      { protocolo: { contains: busca, mode: "insensitive" } },
     ];
   }
   if (dataInicio || dataFim) {
