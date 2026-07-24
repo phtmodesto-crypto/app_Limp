@@ -55,7 +55,6 @@ const CARGOS = [
   "Auxiliar Administrativo",
   "Copeiro(a)",
   "Motorista",
-  "Vigilante / Segurança",
   "Outro",
 ];
 

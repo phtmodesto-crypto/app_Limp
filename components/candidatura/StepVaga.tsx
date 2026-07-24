@@ -18,15 +18,12 @@ const cargos = [
   "Auxiliar Administrativo",
   "Copeiro(a)",
   "Motorista",
-  "Vigilante / Segurança",
   "Outro",
 ];
 
 const turnos = [
-  { value: "Noite (22h–06h)", label: "Noite", desc: "22h às 06h" },
-  { value: "Comercial", label: "Comercial", desc: "08h às 18h" },
-  { value: "12×36 diurno", label: "12×36 Diurno", desc: "Escala 12×36, dia" },
-  { value: "12×36 noturno", label: "12×36 Noturno", desc: "Escala 12×36, noite" },
+  { value: "Diurno (08h–18h)", label: "Diurno", desc: "08h às 18h" },
+  { value: "Noturno (22h–05h)", label: "Noturno", desc: "22h às 05h" },
 ];
 
 interface Props {
