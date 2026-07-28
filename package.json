@@ -22,8 +22,6 @@
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
     "@prisma/client": "^5.22.0",
-    "@react-email/components": "^0.0.30",
-    "@react-email/render": "^1.0.3",
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.46.2",
     "bcryptjs": "^2.4.3",
@@ -34,7 +32,6 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.53.2",
-    "resend": "^4.0.1",
     "uuid": "^10.0.0",
     "xlsx": "^0.18.5",
     "zod": "^3.23.8"

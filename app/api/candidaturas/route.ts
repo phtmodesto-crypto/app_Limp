@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { candidaturaSchema } from "@/lib/validations";
 import { calcularTudo } from "@/lib/scoring";
-import { enviarEmailCandidatura } from "@/lib/email";
+import { enviarTelegramCandidatura } from "@/lib/telegram";
 import { v4 as uuid } from "uuid";
 
 // Rate limiting simples em memória (substitua por Redis em produção)
@@ -118,30 +118,30 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Envia e-mail ao RH (sem bloquear a resposta)
+    // Notifica o RH via Telegram (sem bloquear a resposta)
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-    enviarEmailCandidatura({
-      protocolo: candidatura.protocolo,
-      nomeCompleto: candidatura.nomeCompleto,
-      email: candidatura.email,
-      telefone: candidatura.telefone,
-      cidade: candidatura.cidade,
-      estado: candidatura.estado,
-      cargo: candidatura.cargo,
-      turno: JSON.parse(candidatura.turno),
+    enviarTelegramCandidatura({
+      protocolo:        candidatura.protocolo,
+      nomeCompleto:     candidatura.nomeCompleto,
+      dataNasc:         candidatura.dataNasc,
+      email:            candidatura.email,
+      telefone:         candidatura.telefone,
+      whatsapp:         candidatura.whatsapp,
+      cidade:           candidatura.cidade,
+      estado:           candidatura.estado,
+      cargo:            candidatura.cargo,
+      turno:            JSON.parse(candidatura.turno),
       pretensaoSalarial: candidatura.pretensaoSalarial,
-      escolaridade: candidatura.escolaridade,
-      experiencias: JSON.parse(candidatura.experiencias),
-      cursos: JSON.parse(candidatura.cursos),
-      autoavaliacao: JSON.parse(candidatura.autoavaliacao),
-      pontuacaoTotal: candidatura.pontuacaoTotal,
-      classificacao: candidatura.classificacao as "Perfil em Destaque" | "Perfil Adequado" | "Em Análise",
-      curriculoUrl: candidatura.curriculoUrl,
-      curriculoNome: candidatura.curriculoNome,
-      lgpdDataHora: candidatura.lgpdDataHora,
-      adminUrl: `${appUrl}/admin/candidatos/${candidatura.id}`,
-      createdAt: candidatura.createdAt,
-    }).catch((err) => console.error("Erro ao enviar e-mail:", err));
+      escolaridade:     candidatura.escolaridade,
+      experiencias:     JSON.parse(candidatura.experiencias),
+      cursos:           JSON.parse(candidatura.cursos),
+      autoavaliacao:    JSON.parse(candidatura.autoavaliacao),
+      pontuacaoTotal:   candidatura.pontuacaoTotal,
+      classificacao:    candidatura.classificacao as "Perfil em Destaque" | "Perfil Adequado" | "Em Análise",
+      curriculoUrl:     candidatura.curriculoUrl,
+      curriculoNome:    candidatura.curriculoNome,
+      adminUrl:         `${appUrl}/admin/candidatos/${candidatura.id}`,
+    }).catch((err) => console.error("Erro ao enviar Telegram:", err));
 
     return NextResponse.json({ protocolo: candidatura.protocolo }, { status: 201 });
   } catch (error) {
