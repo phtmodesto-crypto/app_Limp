@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   CheckCircle,
   Clock,
@@ -35,14 +36,8 @@ export default function Home() {
       {/* Header */}
       <header className="bg-gradient-brand shadow-md sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
-              <Star className="w-6 h-6 text-white fill-white" />
-            </div>
-            <div>
-              <p className="text-white font-bold text-lg leading-tight">Grupo Limpservice</p>
-              <p className="text-cyan-200 text-xs">25 Anos de Excelência</p>
-            </div>
+          <div className="bg-white rounded-xl px-3 py-1.5">
+            <Image src="/logo.png" alt="Grupo Limpservice" width={160} height={57} className="h-10 w-auto" />
           </div>
           <Link
             href="/candidatura"
@@ -198,12 +193,8 @@ export default function Home() {
       {/* Footer */}
       <footer className="bg-navy-900 text-white py-10 px-4 mt-8">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <Star className="w-5 h-5 fill-cyan-400 text-cyan-400" />
-              <span className="font-bold text-lg">Grupo Limpservice</span>
-            </div>
-            <p className="text-white/50 text-sm">25 anos de excelência em serviços</p>
+          <div className="bg-white rounded-xl px-3 py-2 inline-block">
+            <Image src="/logo.png" alt="Grupo Limpservice" width={120} height={43} className="h-8 w-auto" />
           </div>
           <div className="flex gap-6 text-sm text-white/60">
             <Link href="/politica-de-privacidade" className="hover:text-white transition-colors">

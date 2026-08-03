@@ -1,13 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import {
   LayoutDashboard,
   Users,
   LogOut,
-  Star,
   Menu,
   X,
 } from "lucide-react";
@@ -53,14 +53,11 @@ export function AdminSidebar() {
       >
         {/* Logo */}
         <div className="p-5 border-b border-white/10">
-          <div className="flex items-center gap-2">
-            <div className="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center">
-              <Star className="w-5 h-5 fill-white text-white" />
+          <div>
+            <div className="bg-white rounded-lg px-2 py-1 inline-block mb-1">
+              <Image src="/logo.png" alt="Grupo Limpservice" width={130} height={46} className="h-7 w-auto" />
             </div>
-            <div>
-              <p className="font-bold text-sm leading-tight">Grupo Limpservice</p>
-              <p className="text-white/60 text-xs">Painel de RH</p>
-            </div>
+            <p className="text-white/60 text-xs">Painel de RH</p>
           </div>
         </div>
 

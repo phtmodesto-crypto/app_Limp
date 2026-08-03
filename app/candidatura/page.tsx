@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { MultiStepForm } from "@/components/candidatura/MultiStepForm";
-import { Star } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -14,13 +14,9 @@ export default function CandidaturaPage() {
       {/* Header compacto */}
       <header className="bg-gradient-brand shadow-md sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-              <Star className="w-5 h-5 text-white fill-white" />
-            </div>
-            <div>
-              <p className="text-white font-bold text-sm leading-tight">Grupo Limpservice</p>
-              <p className="text-cyan-200 text-xs hidden sm:block">25 Anos de Excelência</p>
+          <Link href="/" className="flex items-center">
+            <div className="bg-white rounded-lg px-2 py-1">
+              <Image src="/logo.png" alt="Grupo Limpservice" width={130} height={46} className="h-8 w-auto" />
             </div>
           </Link>
           <p className="text-white/70 text-xs sm:text-sm">

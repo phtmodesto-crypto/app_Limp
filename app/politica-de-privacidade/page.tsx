@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Star, ArrowLeft } from "lucide-react";
+import Image from "next/image";
+import { ArrowLeft } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -14,9 +15,8 @@ export default function PoliticaPrivacidade() {
           <Link href="/" className="text-white/80 hover:text-white transition-colors">
             <ArrowLeft className="w-5 h-5" />
           </Link>
-          <div className="flex items-center gap-2">
-            <Star className="w-6 h-6 text-white fill-white" />
-            <span className="text-white font-bold">Grupo Limpservice</span>
+          <div className="bg-white rounded-lg px-2 py-1">
+            <Image src="/logo.png" alt="Grupo Limpservice" width={130} height={46} className="h-8 w-auto" />
           </div>
         </div>
       </header>

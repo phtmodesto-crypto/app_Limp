@@ -3,7 +3,8 @@
 import { useState, FormEvent } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Eye, EyeOff, Star, Lock } from "lucide-react";
+import Image from "next/image";
+import { Eye, EyeOff, Lock } from "lucide-react";
 import { Suspense } from "react";
 
 function LoginForm() {
@@ -44,10 +45,9 @@ function LoginForm() {
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-3">
-            <Star className="w-9 h-9 text-white fill-white" />
+          <div className="bg-white rounded-2xl px-5 py-4 inline-block mb-3">
+            <Image src="/logo.png" alt="Grupo Limpservice" width={180} height={64} className="h-14 w-auto" />
           </div>
-          <h1 className="text-white font-bold text-xl">Grupo Limpservice</h1>
           <p className="text-white/70 text-sm">Área Administrativa</p>
         </div>
 
