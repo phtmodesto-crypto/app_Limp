@@ -19,7 +19,7 @@ VALUES (
   gen_random_uuid()::text,
   'vagas@limpserviceservicos.com.br',
   'RH Limpservice',
-  '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', -- senha: Admin@2024
+  '$2a$10$1fnozANlDS4PntMotRM2J..4SassKZCi1cWx8hfygw4veLpzqdWEy', -- senha: Admin@2024
   true
 )
 ON CONFLICT DO NOTHING;
