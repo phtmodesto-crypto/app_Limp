@@ -118,9 +118,9 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Notifica o RH via Telegram (sem bloquear a resposta)
+    // Notifica o RH via Telegram
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-    enviarTelegramCandidatura({
+    await enviarTelegramCandidatura({
       protocolo:        candidatura.protocolo,
       nomeCompleto:     candidatura.nomeCompleto,
       dataNasc:         candidatura.dataNasc,
