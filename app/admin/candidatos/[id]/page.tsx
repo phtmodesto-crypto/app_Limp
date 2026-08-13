@@ -7,6 +7,7 @@ import { ArrowLeft, Download, Star, FileText, Shield, Clock } from "lucide-react
 import type { Metadata } from "next";
 import { StatusUpdater } from "@/components/admin/StatusUpdater";
 import { AnonimizarButton } from "@/components/admin/AnonimizarButton";
+import { DeleteButton } from "@/components/admin/DeleteButton";
 
 export const metadata: Metadata = { title: "Detalhe do Candidato — Admin" };
 
@@ -273,6 +274,15 @@ export default async function CandidatoDetalhe({
       {!candidatura.anonimizado && (
         <AnonimizarButton candidaturaId={candidatura.id} />
       )}
+
+      {/* Excluir permanentemente */}
+      <div className="card mb-4 flex items-center justify-between">
+        <div>
+          <p className="font-bold text-slate-700 text-sm">Excluir candidatura</p>
+          <p className="text-xs text-slate-400 mt-0.5">Remove permanentemente todos os dados do banco.</p>
+        </div>
+        <DeleteButton candidaturaId={candidatura.id} nomeCompleto={candidatura.nomeCompleto} />
+      </div>
       {candidatura.anonimizado && (
         <div className="card text-center text-sm text-slate-400 bg-slate-50">
           Dados anonimizados em{" "}

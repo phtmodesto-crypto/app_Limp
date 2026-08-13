@@ -20,6 +20,25 @@ export async function GET(
   return NextResponse.json(candidatura);
 }
 
+export async function DELETE(
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const session = await getServerSession(authOptions);
+  if (!session) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+
+  const { id } = await params;
+
+  const candidatura = await prisma.candidatura.findUnique({ where: { id } });
+  if (!candidatura) {
+    return NextResponse.json({ error: "Candidatura não encontrada" }, { status: 404 });
+  }
+
+  await prisma.candidatura.delete({ where: { id } });
+
+  return NextResponse.json({ ok: true });
+}
+
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
