@@ -10,6 +10,7 @@ import {
   Users,
   Briefcase,
   ChevronRight,
+  Search,
 } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 
@@ -79,6 +80,19 @@ export default async function Home() {
             >
               Ver vagas disponíveis
             </a>
+          </div>
+
+          {/* Link acompanhar candidatura */}
+          <div className="mt-6">
+            <Link
+              href="/acompanhar"
+              className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/30
+                         text-white/90 hover:text-white font-medium px-5 py-2.5 rounded-xl transition-all text-sm"
+            >
+              <Search className="w-4 h-4" />
+              Acompanhar minha candidatura
+              <span className="text-white/50 text-xs">— use seu número de protocolo</span>
+            </Link>
           </div>
           <div className="mt-10 flex flex-wrap gap-6 justify-center text-sm text-white/80">
             <div className="flex items-center gap-2">

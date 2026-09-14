@@ -1,4 +1,4 @@
-import { CheckCircle, Home, Clock, Mail } from "lucide-react";
+import { CheckCircle, Home, Clock, Mail, Search, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
 
@@ -30,7 +30,7 @@ export default async function ConfirmacaoPage({
         </p>
 
         {/* Protocolo */}
-        <div className="card bg-brand-light border border-navy-100 mb-6 text-left">
+        <div className="card bg-brand-light border border-navy-100 mb-4 text-left">
           <p className="text-xs text-slate-500 uppercase tracking-wide mb-1 font-semibold">
             Número do Protocolo
           </p>
@@ -38,9 +38,29 @@ export default async function ConfirmacaoPage({
             {protocolo}
           </p>
           <p className="text-xs text-slate-500 mt-2">
-            Guarde este número para acompanhamento. Em caso de dúvidas, entre em contato
-            citando este protocolo.
+            Guarde este número. Em caso de dúvidas, entre em contato citando este protocolo.
           </p>
+        </div>
+
+        {/* Aviso importante — acompanhamento */}
+        <div className="border-2 border-amber-300 bg-amber-50 rounded-2xl p-4 mb-6 text-left">
+          <div className="flex items-center gap-2 mb-2">
+            <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0" />
+            <p className="text-sm font-bold text-amber-800 uppercase tracking-wide">Importante</p>
+          </div>
+          <p className="text-sm text-amber-900 leading-relaxed mb-3">
+            Com este número de protocolo você pode acompanhar em qual fase sua candidatura
+            se encontra — <strong>Recebida, Em Análise, Entrevista ou Aprovado</strong> —
+            sem precisar de login ou cadastro.
+          </p>
+          <Link
+            href={`/acompanhar?protocolo=${protocolo}`}
+            className="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white
+                       font-semibold text-sm px-4 py-2 rounded-xl transition-colors"
+          >
+            <Search className="w-4 h-4" />
+            Acompanhar minha candidatura
+          </Link>
         </div>
 
         {/* O que acontece agora */}
