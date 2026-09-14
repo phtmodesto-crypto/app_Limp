@@ -7,6 +7,7 @@ import { signOut, useSession } from "next-auth/react";
 import {
   LayoutDashboard,
   Users,
+  Briefcase,
   LogOut,
   Menu,
   X,
@@ -16,6 +17,7 @@ import { useState } from "react";
 const navItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { href: "/admin/candidatos", label: "Candidatos", icon: Users, exact: false },
+  { href: "/admin/vagas", label: "Vagas", icon: Briefcase, exact: false },
 ];
 
 export function AdminSidebar() {

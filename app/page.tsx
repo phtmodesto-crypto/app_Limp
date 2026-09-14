@@ -9,15 +9,7 @@ import {
   Briefcase,
   ChevronRight,
 } from "lucide-react";
-
-const vagas = [
-  { nome: "Auxiliar de Limpeza", icon: "🧹" },
-  { nome: "Jardinagem", icon: "🌿" },
-  { nome: "Portaria / Recepção", icon: "🏢" },
-  { nome: "Serviços Gerais", icon: "🔧" },
-  { nome: "Administrativo", icon: "💼" },
-  { nome: "Serviços Hospitalares", icon: "🏥" },
-];
+import { prisma } from "@/lib/prisma";
 
 const etapas = [
   { num: "1", titulo: "Dados pessoais", desc: "Nome, contato e localização" },
@@ -30,7 +22,11 @@ const etapas = [
   { num: "8", titulo: "Revisão e envio", desc: "Confirme suas informações" },
 ];
 
-export default function Home() {
+export default async function Home() {
+  const vagas = await prisma.vaga.findMany({
+    where: { ativo: true },
+    orderBy: { ordem: "asc" },
+  });
   return (
     <div className="min-h-screen bg-brand-surface">
       {/* Header */}
@@ -139,22 +135,28 @@ export default function Home() {
             <h2 className="text-3xl font-bold text-navy-600 mb-3">Vagas disponíveis</h2>
             <p className="text-slate-500">Selecione sua área de interesse durante o cadastro</p>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {vagas.map((v) => (
-              <Link
-                key={v.nome}
-                href="/candidatura"
-                className="card hover:shadow-card-hover hover:border-navy-100 transition-all
-                           flex items-center gap-3 cursor-pointer group"
-              >
-                <span className="text-2xl">{v.icon}</span>
-                <span className="font-semibold text-slate-700 group-hover:text-navy-600 transition-colors text-sm">
-                  {v.nome}
-                </span>
-                <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-navy-600 ml-auto transition-colors" />
-              </Link>
-            ))}
-          </div>
+          {vagas.length === 0 ? (
+            <p className="text-center text-slate-400 py-8">
+              Nenhuma vaga disponível no momento. Volte em breve!
+            </p>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {vagas.map((v) => (
+                <Link
+                  key={v.id}
+                  href="/candidatura"
+                  className="card hover:shadow-card-hover hover:border-navy-100 transition-all
+                             flex items-center gap-3 cursor-pointer group"
+                >
+                  <span className="text-2xl">{v.icon}</span>
+                  <span className="font-semibold text-slate-700 group-hover:text-navy-600 transition-colors text-sm">
+                    {v.nome}
+                  </span>
+                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-navy-600 ml-auto transition-colors" />
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
