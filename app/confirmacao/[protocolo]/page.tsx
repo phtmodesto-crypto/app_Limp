@@ -37,8 +37,11 @@ export default async function ConfirmacaoPage({
           <p className="text-2xl font-bold text-navy-600 font-mono tracking-wider">
             {protocolo}
           </p>
-          <p className="text-xs text-slate-500 mt-2">
-            Guarde este número. Em caso de dúvidas, entre em contato citando este protocolo.
+          <p className="text-xs text-red-600 font-semibold mt-2 flex items-start gap-1">
+            ⚠️ Anote ou tire um print deste número agora. Após fechar esta página não será possível recuperá-lo.
+          </p>
+          <p className="text-xs text-slate-500 mt-1">
+            Em caso de dúvidas, entre em contato com o RH citando este protocolo.
           </p>
         </div>
 

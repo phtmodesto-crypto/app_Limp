@@ -153,7 +153,9 @@ export function StepRevisao({
         <p className="text-sm text-blue-700 leading-relaxed">
           Com ele você poderá acompanhar em qual fase sua candidatura se encontra
           diretamente no site — <strong>sem precisar de login ou cadastro</strong>.
-          Guarde o protocolo com cuidado.
+        </p>
+        <p className="text-sm font-bold text-blue-900 mt-2 flex items-start gap-1.5">
+          ⚠️ <span>Guarde o protocolo antes de fechar a página de confirmação. Após fechá-la, não será possível recuperá-lo.</span>
         </p>
       </div>
 
