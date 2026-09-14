@@ -145,7 +145,19 @@ export function StepRevisao({
         </div>
       </div>
 
-      {/* Aviso */}
+      {/* Aviso protocolo */}
+      <div className="p-4 bg-blue-50 border-2 border-blue-200 rounded-xl mb-4">
+        <p className="text-sm font-bold text-blue-800 mb-1 flex items-center gap-2">
+          📋 Após o envio você receberá um número de protocolo
+        </p>
+        <p className="text-sm text-blue-700 leading-relaxed">
+          Com ele você poderá acompanhar em qual fase sua candidatura se encontra
+          diretamente no site — <strong>sem precisar de login ou cadastro</strong>.
+          Guarde o protocolo com cuidado.
+        </p>
+      </div>
+
+      {/* Aviso confirmação */}
       <div className="flex items-start gap-2 p-3 bg-amber-50 border border-amber-100 rounded-xl text-sm text-amber-700 mb-4">
         <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
         <span>
