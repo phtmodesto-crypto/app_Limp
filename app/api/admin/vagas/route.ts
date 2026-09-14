@@ -16,8 +16,8 @@ export async function POST(request: NextRequest) {
   if (!session) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
 
   const { nome, icon, ordem } = await request.json();
-  if (!nome?.trim() || !icon?.trim()) {
-    return NextResponse.json({ error: "Nome e ícone são obrigatórios" }, { status: 400 });
+  if (!nome?.trim()) {
+    return NextResponse.json({ error: "Nome é obrigatório" }, { status: 400 });
   }
 
   const existe = await prisma.vaga.findUnique({ where: { nome: nome.trim() } });

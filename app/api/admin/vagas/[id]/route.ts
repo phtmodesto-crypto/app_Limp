@@ -13,8 +13,8 @@ export async function PUT(
   const { id } = await params;
   const { nome, icon, ordem, ativo } = await request.json();
 
-  if (!nome?.trim() || !icon?.trim()) {
-    return NextResponse.json({ error: "Nome e ícone são obrigatórios" }, { status: 400 });
+  if (!nome?.trim()) {
+    return NextResponse.json({ error: "Nome é obrigatório" }, { status: 400 });
   }
 
   const existe = await prisma.vaga.findFirst({

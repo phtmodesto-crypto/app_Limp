@@ -58,8 +58,8 @@ export function VagasManager({ vagasIniciais }: { vagasIniciais: Vaga[] }) {
 
   /* ── Criar ── */
   const criarVaga = async () => {
-    if (!formNova.nome.trim() || !formNova.icon.trim()) {
-      setErro("Nome e ícone são obrigatórios.");
+    if (!formNova.nome.trim()) {
+      setErro("O nome da vaga é obrigatório.");
       return;
     }
     setLoading("nova");
@@ -94,8 +94,8 @@ export function VagasManager({ vagasIniciais }: { vagasIniciais: Vaga[] }) {
   };
 
   const salvarEdicao = async (id: string) => {
-    if (!formEdit.nome.trim() || !formEdit.icon.trim()) {
-      setErro("Nome e ícone são obrigatórios.");
+    if (!formEdit.nome.trim()) {
+      setErro("O nome da vaga é obrigatório.");
       return;
     }
     setLoading(id);
@@ -165,7 +165,7 @@ export function VagasManager({ vagasIniciais }: { vagasIniciais: Vaga[] }) {
           <p className="text-sm font-bold text-navy-600">Nova vaga</p>
           <div className="flex gap-2">
             <div className="w-20">
-              <label className="label-field text-xs">Ícone</label>
+              <label className="label-field text-xs">Ícone <span className="text-slate-400 font-normal">(opt.)</span></label>
               <input
                 type="text"
                 placeholder="🧹"
@@ -228,7 +228,7 @@ export function VagasManager({ vagasIniciais }: { vagasIniciais: Vaga[] }) {
                 <p className="text-xs font-bold text-navy-600 uppercase tracking-wide">Editando</p>
                 <div className="flex gap-2">
                   <div className="w-20">
-                    <label className="label-field text-xs">Ícone</label>
+                    <label className="label-field text-xs">Ícone <span className="text-slate-400 font-normal">(opt.)</span></label>
                     <input
                       type="text"
                       className="input-field py-2 text-center text-xl"
