@@ -96,7 +96,7 @@ export default async function AdminDashboard() {
           </p>
         </div>
         <div className="flex gap-2">
-          <
+          <a
             href="/api/admin/export"
             className="btn-secondary text-sm flex items-center gap-2 px-4 py-2"
           >
