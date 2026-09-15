@@ -158,11 +158,13 @@ export function MultiStepForm() {
     setSubmitting(true);
     setSubmitError("");
     try {
+      const pretensao = parseFloat(formData.pretensaoSalarial);
       const payload = {
         ...formData,
-        pretensaoSalarial: formData.pretensaoSalarial
-          ? parseFloat(formData.pretensaoSalarial)
-          : null,
+        pretensaoSalarial:
+          formData.pretensaoSalarial && !isNaN(pretensao) && pretensao > 0
+            ? pretensao
+            : null,
         turno: formData.turno,
         lgpdDataHora: formData.lgpdDataHora || new Date().toISOString(),
         _hp: "", // honeypot — vazio

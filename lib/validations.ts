@@ -53,7 +53,7 @@ export const candidaturaSchema = z.object({
   // Vaga
   cargo: z.string().min(1, "Selecione a vaga de interesse"),
   turno: z.array(z.string()).min(1, "Selecione ao menos um turno"),
-  pretensaoSalarial: z.number().positive().optional().or(z.literal(0)),
+  pretensaoSalarial: z.number().positive().optional().nullable().or(z.literal(0)),
 
   // Experiência
   experiencias: z.array(experienciaSchema),
