@@ -3,7 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { Download, Search, Filter } from "lucide-react";
+import { Download, Search, Filter, MapPin } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = { title: "Candidatos — Admin" };
@@ -51,7 +51,7 @@ async function getCandidatos(searchParams: Record<string, string>) {
     busca = "",
     status = "",
     classificacao = "",
-    cidade = "",
+    local = "",
     pagina = "1",
     ordenar = "pontuacaoTotal",
     direcao = "desc",
@@ -64,7 +64,12 @@ async function getCandidatos(searchParams: Record<string, string>) {
     anonimizado: false,
     ...(status && { status }),
     ...(classificacao && { classificacao }),
-    ...(cidade && { cidade: { contains: cidade } }),
+    ...(local && {
+      OR: [
+        { cidade: { contains: local } },
+        { estado: { contains: local } },
+      ],
+    }),
     ...(busca && {
       OR: [
         { nomeCompleto: { contains: busca } },
@@ -150,6 +155,20 @@ export default async function CandidatosPage({
                 type="text"
                 placeholder="Nome, e-mail, protocolo ou vaga"
                 defaultValue={params.busca || ""}
+                className="input-field pl-9 py-2 text-sm"
+              />
+            </div>
+          </div>
+
+          <div className="min-w-[160px]">
+            <label className="label-field text-xs">Local</label>
+            <div className="relative">
+              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <input
+                name="local"
+                type="text"
+                placeholder="Cidade ou estado"
+                defaultValue={params.local || ""}
                 className="input-field pl-9 py-2 text-sm"
               />
             </div>
