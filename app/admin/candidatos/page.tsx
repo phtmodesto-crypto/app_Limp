@@ -46,29 +46,9 @@ type CandidatoRow = {
   createdAt: Date;
 };
 
-async function getCargosDisponiveis(): Promise<string[]> {
-  const [vagas, usados] = await Promise.all([
-    prisma.vaga.findMany({ select: { nome: true }, orderBy: { ordem: "asc" } }),
-    prisma.candidatura.findMany({
-      where: { anonimizado: false },
-      select: { cargo: true },
-      distinct: ["cargo"],
-    }),
-  ]);
-
-  const set = new Set<string>();
-  vagas.forEach((v) => set.add(v.nome));
-  usados.forEach((c) => set.has(c.cargo) || set.add(c.cargo));
-
-  const lista = [...set].filter((c) => c !== "Outro").sort((a, b) => a.localeCompare(b, "pt-BR"));
-  if (set.has("Outro")) lista.push("Outro");
-  return lista;
-}
-
 async function getCandidatos(searchParams: Record<string, string>) {
   const {
     busca = "",
-    cargo = "",
     status = "",
     classificacao = "",
     cidade = "",
@@ -82,7 +62,6 @@ async function getCandidatos(searchParams: Record<string, string>) {
 
   const where = {
     anonimizado: false,
-    ...(cargo && { cargo }),
     ...(status && { status }),
     ...(classificacao && { classificacao }),
     ...(cidade && { cidade: { contains: cidade } }),
@@ -91,6 +70,7 @@ async function getCandidatos(searchParams: Record<string, string>) {
         { nomeCompleto: { contains: busca } },
         { email: { contains: busca } },
         { protocolo: { contains: busca } },
+        { cargo: { contains: busca } },
       ],
     }),
   };
@@ -132,10 +112,7 @@ export default async function CandidatosPage({
   if (!session) redirect("/admin/login");
 
   const params = await searchParams;
-  const [{ candidatos, total, pg, totalPaginas }, cargos] = await Promise.all([
-    getCandidatos(params),
-    getCargosDisponiveis(),
-  ]);
+  const { candidatos, total, pg, totalPaginas } = await getCandidatos(params);
 
   const buildUrl = (extra: Record<string, string>) => {
     const p = { ...params, ...extra };
@@ -171,19 +148,11 @@ export default async function CandidatosPage({
               <input
                 name="busca"
                 type="text"
-                placeholder="Nome, e-mail ou protocolo"
+                placeholder="Nome, e-mail, protocolo ou vaga"
                 defaultValue={params.busca || ""}
                 className="input-field pl-9 py-2 text-sm"
               />
             </div>
-          </div>
-
-          <div>
-            <label className="label-field text-xs">Vaga</label>
-            <select name="cargo" defaultValue={params.cargo || ""} className="input-field py-2 text-sm">
-              <option value="">Todas as vagas</option>
-              {cargos.map((c) => <option key={c} value={c}>{c}</option>)}
-            </select>
           </div>
 
           <div>
