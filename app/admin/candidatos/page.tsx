@@ -46,17 +46,24 @@ type CandidatoRow = {
   createdAt: Date;
 };
 
-const CARGOS = [
-  "Auxiliar de Limpeza",
-  "Auxiliar de Serviços Gerais",
-  "Jardineiro(a)",
-  "Porteiro(a) / Recepcionista",
-  "Serviços Hospitalares",
-  "Auxiliar Administrativo",
-  "Copeiro(a)",
-  "Motorista",
-  "Outro",
-];
+async function getCargosDisponiveis(): Promise<string[]> {
+  const [vagas, usados] = await Promise.all([
+    prisma.vaga.findMany({ select: { nome: true }, orderBy: { ordem: "asc" } }),
+    prisma.candidatura.findMany({
+      where: { anonimizado: false },
+      select: { cargo: true },
+      distinct: ["cargo"],
+    }),
+  ]);
+
+  const set = new Set<string>();
+  vagas.forEach((v) => set.add(v.nome));
+  usados.forEach((c) => set.has(c.cargo) || set.add(c.cargo));
+
+  const lista = [...set].filter((c) => c !== "Outro").sort((a, b) => a.localeCompare(b, "pt-BR"));
+  if (set.has("Outro")) lista.push("Outro");
+  return lista;
+}
 
 async function getCandidatos(searchParams: Record<string, string>) {
   const {
@@ -125,7 +132,10 @@ export default async function CandidatosPage({
   if (!session) redirect("/admin/login");
 
   const params = await searchParams;
-  const { candidatos, total, pg, totalPaginas } = await getCandidatos(params);
+  const [{ candidatos, total, pg, totalPaginas }, cargos] = await Promise.all([
+    getCandidatos(params),
+    getCargosDisponiveis(),
+  ]);
 
   const buildUrl = (extra: Record<string, string>) => {
     const p = { ...params, ...extra };
@@ -172,7 +182,7 @@ export default async function CandidatosPage({
             <label className="label-field text-xs">Vaga</label>
             <select name="cargo" defaultValue={params.cargo || ""} className="input-field py-2 text-sm">
               <option value="">Todas as vagas</option>
-              {CARGOS.map((c) => <option key={c} value={c}>{c}</option>)}
+              {cargos.map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
 
