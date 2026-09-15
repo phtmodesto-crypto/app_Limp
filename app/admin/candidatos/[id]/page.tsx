@@ -223,8 +223,7 @@ export default async function CandidatoDetalhe({
             </p>
           </div>
           <a
-            href={candidatura.curriculoUrl}
-            download
+            href={`/api/admin/curriculo?id=${candidatura.id}`}
             target="_blank"
             rel="noopener noreferrer"
             className="btn-secondary text-sm flex items-center gap-2 px-3 py-2"
