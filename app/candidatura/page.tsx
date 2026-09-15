@@ -2,13 +2,22 @@ import type { Metadata } from "next";
 import { MultiStepForm } from "@/components/candidatura/MultiStepForm";
 import Image from "next/image";
 import Link from "next/link";
+import { prisma } from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Envie seu Currículo",
   description: "Candidate-se a uma vaga no Grupo Limpservice. Processo simples e rápido.",
 };
 
-export default function CandidaturaPage() {
+export default async function CandidaturaPage() {
+  const vagas = await prisma.vaga.findMany({
+    where: { ativo: true },
+    orderBy: { ordem: "asc" },
+    select: { id: true, nome: true, icon: true },
+  });
+
   return (
     <div className="min-h-screen bg-brand-surface">
       {/* Header compacto */}
@@ -26,7 +35,7 @@ export default function CandidaturaPage() {
       </header>
 
       <main className="max-w-2xl mx-auto px-4 py-8">
-        <MultiStepForm />
+        <MultiStepForm vagas={vagas} />
       </main>
 
       <footer className="text-center py-6 text-xs text-slate-400">

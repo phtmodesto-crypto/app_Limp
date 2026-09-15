@@ -9,17 +9,11 @@ import { z } from "zod";
 
 type StepData = z.infer<typeof stepVagaSchema>;
 
-const cargos = [
-  "Auxiliar de Limpeza",
-  "Auxiliar de Serviços Gerais",
-  "Jardineiro(a)",
-  "Porteiro(a) / Recepcionista",
-  "Serviços Hospitalares",
-  "Auxiliar Administrativo",
-  "Copeiro(a)",
-  "Motorista",
-  "Outro",
-];
+interface VagaOption {
+  id: string;
+  nome: string;
+  icon: string;
+}
 
 const turnos = [
   { value: "Diurno (08h–18h)", label: "Diurno", desc: "08h às 18h" },
@@ -31,9 +25,10 @@ interface Props {
   updateFormData: (partial: Partial<FormData>) => void;
   onNext: () => void;
   onBack: () => void;
+  vagas?: VagaOption[];
 }
 
-export function StepVaga({ formData, updateFormData, onNext, onBack }: Props) {
+export function StepVaga({ formData, updateFormData, onNext, onBack, vagas = [] }: Props) {
   const {
     register,
     handleSubmit,
@@ -83,9 +78,10 @@ export function StepVaga({ formData, updateFormData, onNext, onBack }: Props) {
             {...register("cargo")}
           >
             <option value="">Selecione uma vaga…</option>
-            {cargos.map((c) => (
-              <option key={c} value={c}>{c}</option>
+            {vagas.map((v) => (
+              <option key={v.id} value={v.nome}>{v.nome}</option>
             ))}
+            <option value="Outro">Outro</option>
           </select>
           {errors.cargo && (
             <p className="error-msg">{errors.cargo.message}</p>

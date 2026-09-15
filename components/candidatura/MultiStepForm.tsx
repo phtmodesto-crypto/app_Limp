@@ -111,7 +111,13 @@ const STEP_LABELS = [
 
 const TOTAL_STEPS = STEP_LABELS.length; // 9 (0–8)
 
-export function MultiStepForm() {
+interface VagaOption {
+  id: string;
+  nome: string;
+  icon: string;
+}
+
+export function MultiStepForm({ vagas = [] }: { vagas?: VagaOption[] }) {
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [formData, setFormData] = useState<FormData>(defaultFormData);
@@ -213,7 +219,7 @@ export function MultiStepForm() {
       {/* Steps */}
       {step === 0 && <StepWelcome onNext={goNext} />}
       {step === 1 && <StepDadosPessoais {...commonProps} />}
-      {step === 2 && <StepVaga {...commonProps} />}
+      {step === 2 && <StepVaga {...commonProps} vagas={vagas} />}
       {step === 3 && <StepExperiencia {...commonProps} />}
       {step === 4 && <StepFormacao {...commonProps} />}
       {step === 5 && <StepAutoavaliacao {...commonProps} />}
