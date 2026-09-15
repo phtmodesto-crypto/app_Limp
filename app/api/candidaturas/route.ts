@@ -119,8 +119,8 @@ export async function POST(request: NextRequest) {
     });
 
     // Notifica o RH via Telegram
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-    await enviarTelegramCandidatura({
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://app-limp-v2zd.vercel.app";
+    const tgResult = await enviarTelegramCandidatura({
       protocolo:        candidatura.protocolo,
       nomeCompleto:     candidatura.nomeCompleto,
       dataNasc:         candidatura.dataNasc,
@@ -141,7 +141,13 @@ export async function POST(request: NextRequest) {
       curriculoUrl:     candidatura.curriculoUrl,
       curriculoNome:    candidatura.curriculoNome,
       adminUrl:         `${appUrl}/admin/candidatos/${candidatura.id}`,
-    }).catch((err) => console.error("Erro ao enviar Telegram:", err));
+    }).catch((err) => {
+      console.error("Telegram exceção:", err);
+      return { success: false, error: String(err) };
+    });
+    if (!tgResult.success) {
+      console.error(`Telegram falhou para protocolo ${candidatura.protocolo}:`, JSON.stringify(tgResult));
+    }
 
     return NextResponse.json({ protocolo: candidatura.protocolo }, { status: 201 });
   } catch (error) {

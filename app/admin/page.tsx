@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { Users, Briefcase, TrendingUp, Star, Clock, Download } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { TelegramTestButton } from "@/components/admin/TelegramTestButton";
 
 export const metadata: Metadata = { title: "Dashboard — Admin" };
 
@@ -95,7 +96,8 @@ export default async function AdminDashboard() {
             Olá, {session.user?.name}! Aqui está o resumo das candidaturas.
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          <TelegramTestButton />
           <a
             href="/api/admin/export"
             className="btn-secondary text-sm flex items-center gap-2 px-4 py-2"
