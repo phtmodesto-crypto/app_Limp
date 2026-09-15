@@ -60,25 +60,34 @@ async function getCandidatos(searchParams: Record<string, string>) {
   const pg = parseInt(pagina);
   const porPagina = 20;
 
-  const where = {
-    anonimizado: false,
-    ...(status && { status }),
-    ...(classificacao && { classificacao }),
-    ...(local && {
-      OR: [
-        { cidade: { contains: local } },
-        { estado: { contains: local } },
-      ],
-    }),
-    ...(busca && {
+  const conditions: object[] = [{ anonimizado: false }];
+  if (status) conditions.push({ status });
+  if (classificacao) conditions.push({ classificacao });
+
+  if (local) {
+    const partes = local.split("/").map((p) => p.trim()).filter(Boolean);
+    if (partes.length >= 2) {
+      // "Cariacica /ES" → busca cidade E estado separados
+      conditions.push({ cidade: { contains: partes[0] } });
+      conditions.push({ estado: { contains: partes[1] } });
+    } else {
+      // só cidade ou só estado
+      conditions.push({ OR: [{ cidade: { contains: local } }, { estado: { contains: local } }] });
+    }
+  }
+
+  if (busca) {
+    conditions.push({
       OR: [
         { nomeCompleto: { contains: busca } },
         { email: { contains: busca } },
         { protocolo: { contains: busca } },
         { cargo: { contains: busca } },
       ],
-    }),
-  };
+    });
+  }
+
+  const where = { AND: conditions };
 
   const [total, candidatos] = await Promise.all([
     prisma.candidatura.count({ where }),
