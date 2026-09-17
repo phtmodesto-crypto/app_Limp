@@ -199,6 +199,7 @@ export default async function CandidatosPage({
               <option value="">Todas</option>
               <option value="Perfil em Destaque">Perfil em Destaque</option>
               <option value="Perfil Adequado">Perfil Adequado</option>
+              <option value="Em Análise">Perfil em Análise</option>
             </select>
           </div>
 
