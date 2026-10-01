@@ -2,8 +2,10 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { filtrosBusca } from "@/lib/busca";
+import type { Prisma } from "@prisma/client";
 import Link from "next/link";
-import { Download, Search, Filter, MapPin } from "lucide-react";
+import { Download, Search, Filter, MapPin, Info } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = { title: "Candidatos — Admin" };
@@ -46,6 +48,13 @@ type CandidatoRow = {
   createdAt: Date;
 };
 
+async function idsPorFiltro(filtro: Prisma.Sql): Promise<string[]> {
+  const linhas = await prisma.$queryRaw<{ id: string }[]>`
+    SELECT "id" FROM "Candidatura" WHERE "anonimizado" = false AND ${filtro}
+  `;
+  return linhas.map((l) => l.id);
+}
+
 async function getCandidatos(searchParams: Record<string, string>) {
   const {
     busca = "",
@@ -64,27 +73,15 @@ async function getCandidatos(searchParams: Record<string, string>) {
   if (status) conditions.push({ status });
   if (classificacao) conditions.push({ classificacao });
 
-  if (local) {
-    const partes = local.split("/").map((p) => p.trim()).filter(Boolean);
-    if (partes.length >= 2) {
-      // "Cariacica /ES" → busca cidade E estado separados
-      conditions.push({ cidade: { contains: partes[0] } });
-      conditions.push({ estado: { contains: partes[1] } });
-    } else {
-      // só cidade ou só estado
-      conditions.push({ OR: [{ cidade: { contains: local } }, { estado: { contains: local } }] });
+  let buscaAproximada = false;
+  const filtros = filtrosBusca(busca, local);
+  if (filtros) {
+    let ids = await idsPorFiltro(filtros.exato);
+    if (ids.length === 0 && filtros.aproximado) {
+      ids = await idsPorFiltro(filtros.aproximado);
+      buscaAproximada = ids.length > 0;
     }
-  }
-
-  if (busca) {
-    conditions.push({
-      OR: [
-        { nomeCompleto: { contains: busca } },
-        { email: { contains: busca } },
-        { protocolo: { contains: busca } },
-        { cargo: { contains: busca } },
-      ],
-    });
+    conditions.push({ id: { in: ids } });
   }
 
   const where = { AND: conditions };
@@ -114,7 +111,14 @@ async function getCandidatos(searchParams: Record<string, string>) {
     }),
   ]);
 
-  return { candidatos, total, pg, porPagina, totalPaginas: Math.ceil(total / porPagina) };
+  return {
+    candidatos,
+    total,
+    pg,
+    porPagina,
+    totalPaginas: Math.ceil(total / porPagina),
+    buscaAproximada,
+  };
 }
 
 export default async function CandidatosPage({
@@ -126,7 +130,7 @@ export default async function CandidatosPage({
   if (!session) redirect("/admin/login");
 
   const params = await searchParams;
-  const { candidatos, total, pg, totalPaginas } = await getCandidatos(params);
+  const { candidatos, total, pg, totalPaginas, buscaAproximada } = await getCandidatos(params);
 
   const buildUrl = (extra: Record<string, string>) => {
     const p = { ...params, ...extra };
@@ -221,6 +225,13 @@ export default async function CandidatosPage({
           </a>
         </form>
       </div>
+
+      {buscaAproximada && total > 0 && (
+        <div className="flex items-start gap-2 p-3 mb-5 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-800">
+          <Info className="w-4 h-4 mt-0.5 flex-shrink-0" />
+          <span>Nenhum resultado exato. Mostrando candidatos com pelo menos uma das palavras.</span>
+        </div>
+      )}
 
       {/* Tabela */}
       <div className="card overflow-hidden p-0">
