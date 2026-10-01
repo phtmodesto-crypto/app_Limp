@@ -47,7 +47,7 @@ export default function PoliticaPrivacidade() {
                 <li>Dados de localização: cidade e estado</li>
                 <li>Dados profissionais: cargo desejado, histórico de experiências, formação</li>
                 <li>Autoavaliação de competências profissionais</li>
-                <li>Currículo (PDF/DOCX), quando enviado voluntariamente</li>
+                <li>Currículo (PDF, DOC/DOCX ou imagem PNG/JPG), quando enviado voluntariamente</li>
                 <li>Data e hora do consentimento LGPD</li>
               </ul>
             </section>

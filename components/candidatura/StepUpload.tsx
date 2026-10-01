@@ -4,10 +4,12 @@ import { useState, useCallback } from "react";
 import type { FormData } from "./MultiStepForm";
 import { ChevronRight, ChevronLeft, Upload, FileText, X, CheckCircle } from "lucide-react";
 
-const MAX_SIZE_MB = 5;
-const ALLOWED_TYPES = ["application/pdf", "application/msword",
+const MAX_SIZE_DOC_MB = 5;
+const MAX_SIZE_IMG_MB = 10;
+const DOC_TYPES = ["application/pdf", "application/msword",
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
-const ALLOWED_EXT = [".pdf", ".doc", ".docx"];
+const IMG_TYPES = ["image/png", "image/jpeg"];
+const ALLOWED_EXT = [".pdf", ".doc", ".docx", ".png", ".jpg", ".jpeg"];
 
 interface Props {
   formData: FormData;
@@ -27,12 +29,14 @@ export function StepUpload({ formData, updateFormData, onNext, onBack }: Props) 
     async (file: File) => {
       setUploadError("");
 
-      if (!ALLOWED_TYPES.includes(file.type)) {
-        setUploadError("Tipo de arquivo inválido. Use PDF, DOC ou DOCX.");
+      const isImage = IMG_TYPES.includes(file.type);
+      if (!isImage && !DOC_TYPES.includes(file.type)) {
+        setUploadError("Tipo de arquivo inválido. Use PDF, DOC, DOCX, PNG ou JPG.");
         return;
       }
-      if (file.size > MAX_SIZE_MB * 1024 * 1024) {
-        setUploadError(`Arquivo muito grande. Tamanho máximo: ${MAX_SIZE_MB} MB.`);
+      const maxMb = isImage ? MAX_SIZE_IMG_MB : MAX_SIZE_DOC_MB;
+      if (file.size > maxMb * 1024 * 1024) {
+        setUploadError(`Arquivo muito grande. Tamanho máximo: ${maxMb} MB.`);
         return;
       }
 
@@ -105,7 +109,7 @@ export function StepUpload({ formData, updateFormData, onNext, onBack }: Props) 
 
       <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-3 mb-5 text-sm text-emerald-700">
         ✅ <strong>Esta etapa é opcional.</strong> Você pode prosseguir sem fazer upload,
-        mas enviar seu currículo em PDF ou DOCX aumenta significativamente sua pontuação.
+        mas enviar seu currículo (em PDF, DOCX ou foto) aumenta significativamente sua pontuação.
       </div>
 
       {/* Área de upload */}
@@ -148,7 +152,7 @@ export function StepUpload({ formData, updateFormData, onNext, onBack }: Props) 
                 onChange={handleInputChange}
               />
               <p className="text-xs text-slate-400 mt-4">
-                PDF, DOC ou DOCX · Máximo {MAX_SIZE_MB} MB
+                PDF, DOC ou DOCX (até {MAX_SIZE_DOC_MB} MB) · PNG ou JPG (até {MAX_SIZE_IMG_MB} MB)
               </p>
             </>
           )}

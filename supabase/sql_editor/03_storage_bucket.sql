@@ -14,11 +14,13 @@ VALUES (
   'curriculos',
   'curriculos',
   false,       -- PRIVADO — acesso apenas via signed URL
-  5242880,     -- 5 MB máximo por arquivo
+  10485760,    -- 10 MB máximo (limite por tipo é aplicado na API: docs 5 MB, imagens 10 MB)
   ARRAY[
     'application/pdf',
     'application/msword',
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'image/png',
+    'image/jpeg'
   ]
 )
 ON CONFLICT (id) DO UPDATE SET

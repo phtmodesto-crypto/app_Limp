@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
-const ALLOWED_TYPES = [
+const MAX_SIZE_DOC = 5 * 1024 * 1024;
+// Fotos de celular costumam passar de 5 MB
+const MAX_SIZE_IMG = 10 * 1024 * 1024;
+const DOC_TYPES = [
   "application/pdf",
   "application/msword",
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 ];
+const IMG_TYPES = ["image/png", "image/jpeg"];
 
 // Usa Supabase Storage apenas quando explicitamente habilitado via env
 // Em desenvolvimento (USE_SUPABASE_STORAGE != "true") salva em public/uploads
@@ -22,12 +25,16 @@ export async function POST(request: NextRequest) {
     if (!file) {
       return NextResponse.json({ error: "Arquivo não enviado" }, { status: 400 });
     }
-    if (file.size > MAX_SIZE) {
-      return NextResponse.json({ error: "Arquivo excede 5 MB" }, { status: 400 });
-    }
-    if (!ALLOWED_TYPES.includes(file.type)) {
+    const isImage = IMG_TYPES.includes(file.type);
+    if (!isImage && !DOC_TYPES.includes(file.type)) {
       return NextResponse.json(
-        { error: "Tipo de arquivo inválido. Use PDF, DOC ou DOCX." },
+        { error: "Tipo de arquivo inválido. Use PDF, DOC, DOCX, PNG ou JPG." },
+        { status: 400 }
+      );
+    }
+    if (file.size > (isImage ? MAX_SIZE_IMG : MAX_SIZE_DOC)) {
+      return NextResponse.json(
+        { error: `Arquivo excede ${isImage ? 10 : 5} MB` },
         { status: 400 }
       );
     }
