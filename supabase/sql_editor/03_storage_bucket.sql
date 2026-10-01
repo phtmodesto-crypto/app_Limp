@@ -14,7 +14,7 @@ VALUES (
   'curriculos',
   'curriculos',
   false,       -- PRIVADO — acesso apenas via signed URL
-  10485760,    -- 10 MB máximo (limite por tipo é aplicado na API: docs 5 MB, imagens 10 MB)
+  10485760,    -- 10 MB (o envio real é limitado a 4 MB na API; fotos são comprimidas no navegador)
   ARRAY[
     'application/pdf',
     'application/msword',

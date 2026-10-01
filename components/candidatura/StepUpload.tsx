@@ -3,9 +3,13 @@
 import { useState, useCallback } from "react";
 import type { FormData } from "./MultiStepForm";
 import { ChevronRight, ChevronLeft, Upload, FileText, X, CheckCircle } from "lucide-react";
+import { comprimirImagem } from "@/lib/comprimirImagem";
 
-const MAX_SIZE_DOC_MB = 5;
-const MAX_SIZE_IMG_MB = 10;
+// O Vercel recusa envios acima de ~4,5 MB; por isso fotos maiores são comprimidas antes
+const LIMITE_ENVIO_MB = 4;
+const MAX_FOTO_MB = 10;
+const COMPRIMIR_ACIMA_MB = 1;
+const MB = 1024 * 1024;
 const DOC_TYPES = ["application/pdf", "application/msword",
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
 const IMG_TYPES = ["image/png", "image/jpeg"];
@@ -34,8 +38,8 @@ export function StepUpload({ formData, updateFormData, onNext, onBack }: Props) 
         setUploadError("Tipo de arquivo inválido. Use PDF, DOC, DOCX, PNG ou JPG.");
         return;
       }
-      const maxMb = isImage ? MAX_SIZE_IMG_MB : MAX_SIZE_DOC_MB;
-      if (file.size > maxMb * 1024 * 1024) {
+      const maxMb = isImage ? MAX_FOTO_MB : LIMITE_ENVIO_MB;
+      if (file.size > maxMb * MB) {
         setUploadError(`Arquivo muito grande. Tamanho máximo: ${maxMb} MB.`);
         return;
       }
@@ -44,8 +48,16 @@ export function StepUpload({ formData, updateFormData, onNext, onBack }: Props) 
       setFileName(file.name);
 
       try {
+        let envio = file;
+        if (isImage && file.size > COMPRIMIR_ACIMA_MB * MB) {
+          envio = await comprimirImagem(file, LIMITE_ENVIO_MB * MB).catch(() => {
+            if (file.size <= LIMITE_ENVIO_MB * MB) return file;
+            throw new Error("Não foi possível processar a foto. Tente outra imagem ou envie em PDF.");
+          });
+        }
+
         const formDataUpload = new FormData();
-        formDataUpload.append("file", file);
+        formDataUpload.append("file", envio);
 
         const res = await fetch("/api/upload", {
           method: "POST",
@@ -53,6 +65,9 @@ export function StepUpload({ formData, updateFormData, onNext, onBack }: Props) 
         });
 
         if (!res.ok) {
+          if (res.status === 413) {
+            throw new Error(`Arquivo muito grande. Tamanho máximo: ${LIMITE_ENVIO_MB} MB.`);
+          }
           const err = await res.json().catch(() => ({}));
           throw new Error(err.error || "Erro no upload");
         }
@@ -60,10 +75,11 @@ export function StepUpload({ formData, updateFormData, onNext, onBack }: Props) 
         const data = await res.json();
         updateFormData({
           curriculoUrl: data.url,
-          curriculoNome: file.name,
-          curriculoTipo: file.type,
-          curriculoTamanho: file.size,
+          curriculoNome: envio.name,
+          curriculoTipo: envio.type,
+          curriculoTamanho: envio.size,
         });
+        setFileName(envio.name);
         setUploaded(true);
       } catch (err) {
         setUploadError(err instanceof Error ? err.message : "Erro no upload. Tente novamente.");
@@ -152,7 +168,7 @@ export function StepUpload({ formData, updateFormData, onNext, onBack }: Props) 
                 onChange={handleInputChange}
               />
               <p className="text-xs text-slate-400 mt-4">
-                PDF, DOC ou DOCX (até {MAX_SIZE_DOC_MB} MB) · PNG ou JPG (até {MAX_SIZE_IMG_MB} MB)
+                PDF, DOC ou DOCX (até {LIMITE_ENVIO_MB} MB) · PNG ou JPG (até {MAX_FOTO_MB} MB)
               </p>
             </>
           )}

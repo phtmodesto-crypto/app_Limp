@@ -11,7 +11,7 @@ VALUES (
   'curriculos',
   'curriculos',
   false,                         -- bucket PRIVADO (acesso via signed URL)
-  10485760,                      -- 10 MB em bytes (limite por tipo é aplicado na API: docs 5 MB, imagens 10 MB)
+  10485760,                      -- 10 MB em bytes (o envio real é limitado a 4 MB na API; fotos são comprimidas no navegador)
   ARRAY[
     'application/pdf',
     'application/msword',
