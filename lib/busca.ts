@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+import { prisma } from "./prisma";
 
 const CAMPOS_BUSCA = ["nomeCompleto", "email", "protocolo", "cargo"];
 const CONECTIVOS = new Set(["de", "da", "do", "das", "dos", "e"]);
@@ -16,7 +17,7 @@ function contem(coluna: string, termo: string): Prisma.Sql {
   return Prisma.sql`lower(translate(${Prisma.raw(`"${coluna}"`)}, ${COM_ACENTO}, ${SEM_ACENTO})) LIKE ${padrao}`;
 }
 
-export function filtrosBusca(
+function filtrosBusca(
   busca: string,
   local: string
 ): { exato: Prisma.Sql; aproximado: Prisma.Sql | null } | null {
@@ -46,4 +47,24 @@ export function filtrosBusca(
         ? Prisma.join([Prisma.sql`(${Prisma.join(porPalavra, " OR ")})`, ...porLocal], " AND ")
         : null,
   };
+}
+
+async function idsPorFiltro(filtro: Prisma.Sql): Promise<string[]> {
+  const linhas = await prisma.$queryRaw<{ id: string }[]>`
+    SELECT "id" FROM "Candidatura" WHERE "anonimizado" = false AND ${filtro}
+  `;
+  return linhas.map((l) => l.id);
+}
+
+// null quando Busca e Local estão vazios (nenhum filtro de texto a aplicar)
+export async function idsPorBusca(
+  busca: string,
+  local: string
+): Promise<{ ids: string[]; aproximada: boolean } | null> {
+  const filtros = filtrosBusca(busca, local);
+  if (!filtros) return null;
+  const ids = await idsPorFiltro(filtros.exato);
+  if (ids.length > 0 || !filtros.aproximado) return { ids, aproximada: false };
+  const aproximados = await idsPorFiltro(filtros.aproximado);
+  return { ids: aproximados, aproximada: aproximados.length > 0 };
 }

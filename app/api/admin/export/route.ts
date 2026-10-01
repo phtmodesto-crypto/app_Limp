@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { idsPorBusca } from "@/lib/busca";
 import * as XLSX from "xlsx";
 
 export async function GET(request: NextRequest) {
@@ -9,15 +10,17 @@ export async function GET(request: NextRequest) {
   if (!session) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
 
   const { searchParams } = new URL(request.url);
-  const cargo = searchParams.get("cargo") || "";
+  const busca = searchParams.get("busca") || "";
+  const local = searchParams.get("local") || "";
   const status = searchParams.get("status") || "";
   const classificacao = searchParams.get("classificacao") || "";
 
+  const resultadoBusca = await idsPorBusca(busca, local);
   const where = {
     anonimizado: false,
-    ...(cargo && { cargo }),
     ...(status && { status }),
     ...(classificacao && { classificacao }),
+    ...(resultadoBusca && { id: { in: resultadoBusca.ids } }),
   };
 
   const candidaturas = await prisma.candidatura.findMany({

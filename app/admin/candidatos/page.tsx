@@ -2,8 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { filtrosBusca } from "@/lib/busca";
-import type { Prisma } from "@prisma/client";
+import { idsPorBusca } from "@/lib/busca";
 import Link from "next/link";
 import { Download, Search, Filter, MapPin, Info } from "lucide-react";
 import type { Metadata } from "next";
@@ -48,13 +47,6 @@ type CandidatoRow = {
   createdAt: Date;
 };
 
-async function idsPorFiltro(filtro: Prisma.Sql): Promise<string[]> {
-  const linhas = await prisma.$queryRaw<{ id: string }[]>`
-    SELECT "id" FROM "Candidatura" WHERE "anonimizado" = false AND ${filtro}
-  `;
-  return linhas.map((l) => l.id);
-}
-
 async function getCandidatos(searchParams: Record<string, string>) {
   const {
     busca = "",
@@ -73,16 +65,8 @@ async function getCandidatos(searchParams: Record<string, string>) {
   if (status) conditions.push({ status });
   if (classificacao) conditions.push({ classificacao });
 
-  let buscaAproximada = false;
-  const filtros = filtrosBusca(busca, local);
-  if (filtros) {
-    let ids = await idsPorFiltro(filtros.exato);
-    if (ids.length === 0 && filtros.aproximado) {
-      ids = await idsPorFiltro(filtros.aproximado);
-      buscaAproximada = ids.length > 0;
-    }
-    conditions.push({ id: { in: ids } });
-  }
+  const resultadoBusca = await idsPorBusca(busca, local);
+  if (resultadoBusca) conditions.push({ id: { in: resultadoBusca.ids } });
 
   const where = { AND: conditions };
 
@@ -117,7 +101,7 @@ async function getCandidatos(searchParams: Record<string, string>) {
     pg,
     porPagina,
     totalPaginas: Math.ceil(total / porPagina),
-    buscaAproximada,
+    buscaAproximada: resultadoBusca?.aproximada ?? false,
   };
 }
 
@@ -146,7 +130,8 @@ export default async function CandidatosPage({
         </div>
         <a
           href={`/api/admin/export?${new URLSearchParams({
-            cargo: params.cargo || "",
+            busca: params.busca || "",
+            local: params.local || "",
             status: params.status || "",
             classificacao: params.classificacao || "",
           }).toString()}`}
