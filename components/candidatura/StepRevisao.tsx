@@ -2,6 +2,7 @@
 
 import type { FormData } from "./MultiStepForm";
 import { ChevronLeft, Send, AlertCircle, CheckCircle, Edit3 } from "lucide-react";
+import { isoParaBr } from "@/lib/validations";
 
 interface Props {
   formData: FormData;
@@ -64,7 +65,7 @@ export function StepRevisao({
         {/* Dados pessoais */}
         <Section title="Dados pessoais">
           <Row label="Nome" value={formData.nomeCompleto} />
-          <Row label="Nascimento" value={formData.dataNasc} />
+          <Row label="Nascimento" value={isoParaBr(formData.dataNasc)} />
           <Row label="Telefone" value={formData.telefone} />
           {formData.whatsapp && <Row label="WhatsApp" value={formData.whatsapp} />}
           <Row label="E-mail" value={formData.email} />

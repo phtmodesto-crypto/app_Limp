@@ -1,4 +1,5 @@
 import type { Classificacao } from "@/lib/scoring";
+import { isoParaBr } from "@/lib/validations";
 
 export interface TelegramCandidaturaData {
   protocolo: string;
@@ -103,7 +104,7 @@ function construirMensagem(data: TelegramCandidaturaData): string {
     ``,
     `👤 <b>DADOS PESSOAIS</b>`,
     `<b>Nome:</b> ${esc(data.nomeCompleto)}`,
-    `<b>Nascimento:</b> ${esc(data.dataNasc)}`,
+    `<b>Nascimento:</b> ${esc(isoParaBr(data.dataNasc))}`,
     `<b>Email:</b> ${esc(data.email)}`,
     `<b>Telefone:</b> ${esc(data.telefone)}${whatsapp}`,
     `<b>Cidade:</b> ${esc(data.cidade)} — ${esc(data.estado)}`,

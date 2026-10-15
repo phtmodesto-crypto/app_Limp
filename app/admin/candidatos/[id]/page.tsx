@@ -8,6 +8,7 @@ import type { Metadata } from "next";
 import { StatusUpdater } from "@/components/admin/StatusUpdater";
 import { AnonimizarButton } from "@/components/admin/AnonimizarButton";
 import { DeleteButton } from "@/components/admin/DeleteButton";
+import { isoParaBr } from "@/lib/validations";
 
 export const metadata: Metadata = { title: "Detalhe do Candidato — Admin" };
 
@@ -130,7 +131,7 @@ export default async function CandidatoDetalhe({
       {/* Dados pessoais */}
       <Section title="👤 Dados pessoais">
         <Row label="Nome completo" value={candidatura.nomeCompleto} />
-        <Row label="Data de nascimento" value={candidatura.dataNasc} />
+        <Row label="Data de nascimento" value={isoParaBr(candidatura.dataNasc)} />
         <Row label="Telefone" value={candidatura.telefone} />
         <Row label="WhatsApp" value={candidatura.whatsapp} />
         <Row label="E-mail" value={candidatura.email} />

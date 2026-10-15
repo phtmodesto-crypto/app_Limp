@@ -2,12 +2,21 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { stepDadosPessoaisSchema } from "@/lib/validations";
+import { stepDadosPessoaisSchema, brParaIso, isoParaBr } from "@/lib/validations";
 import type { FormData } from "./MultiStepForm";
 import { ChevronRight, ChevronLeft, User } from "lucide-react";
 import { z } from "zod";
 
 type StepData = z.infer<typeof stepDadosPessoaisSchema>;
+
+// Só dígitos, com as barras inseridas automaticamente: "25031990" → "25/03/1990"
+function mascararData(valor: string): string {
+  if (/^\d{4}-\d{2}-\d{2}$/.test(valor)) return isoParaBr(valor); // preenchimento automático do navegador
+  const d = valor.replace(/\D/g, "").slice(0, 8);
+  if (d.length <= 2) return d;
+  if (d.length <= 4) return `${d.slice(0, 2)}/${d.slice(2)}`;
+  return `${d.slice(0, 2)}/${d.slice(2, 4)}/${d.slice(4)}`;
+}
 
 const estados = [
   "AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG",
@@ -30,7 +39,7 @@ export function StepDadosPessoais({ formData, updateFormData, onNext, onBack }: 
     resolver: zodResolver(stepDadosPessoaisSchema),
     defaultValues: {
       nomeCompleto: formData.nomeCompleto,
-      dataNasc: formData.dataNasc,
+      dataNasc: isoParaBr(formData.dataNasc),
       telefone: formData.telefone,
       whatsapp: formData.whatsapp,
       email: formData.email,
@@ -39,8 +48,10 @@ export function StepDadosPessoais({ formData, updateFormData, onNext, onBack }: 
     },
   });
 
+  const campoDataNasc = register("dataNasc");
+
   const onSubmit = (data: StepData) => {
-    updateFormData(data);
+    updateFormData({ ...data, dataNasc: brParaIso(data.dataNasc) ?? "" });
     onNext();
   };
 
@@ -83,11 +94,17 @@ export function StepDadosPessoais({ formData, updateFormData, onNext, onBack }: 
           </label>
           <input
             id="dataNasc"
-            type="date"
+            type="text"
+            inputMode="numeric"
             autoComplete="bday"
-            max={new Date().toISOString().split("T")[0]}
+            placeholder="dd/mm/aaaa"
+            maxLength={10}
             className={`input-field ${errors.dataNasc ? "input-error" : ""}`}
-            {...register("dataNasc")}
+            {...campoDataNasc}
+            onChange={(e) => {
+              e.target.value = mascararData(e.target.value);
+              campoDataNasc.onChange(e);
+            }}
           />
           {errors.dataNasc && (
             <p className="error-msg">{errors.dataNasc.message}</p>
