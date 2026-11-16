@@ -279,7 +279,7 @@ export default async function CandidatoDetalhe({
       <div className="card mb-4 flex items-center justify-between">
         <div>
           <p className="font-bold text-slate-700 text-sm">Excluir candidatura</p>
-          <p className="text-xs text-slate-400 mt-0.5">Remove permanentemente todos os dados do banco.</p>
+          <p className="text-xs text-slate-400 mt-0.5">Remove permanentemente todos os dados e o currículo enviado.</p>
         </div>
         <DeleteButton candidaturaId={candidatura.id} nomeCompleto={candidatura.nomeCompleto} />
       </div>

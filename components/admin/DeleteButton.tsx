@@ -43,7 +43,7 @@ export function DeleteButton({ candidaturaId, nomeCompleto }: Props) {
           <div>
             <p className="font-bold text-red-700 text-sm">Excluir candidatura permanentemente?</p>
             <p className="text-xs text-red-600 mt-1">
-              Todos os dados de <strong>{nomeCompleto}</strong> serão removidos do banco de dados.
+              Todos os dados de <strong>{nomeCompleto}</strong>, incluindo o currículo enviado, serão removidos.
               Esta ação é <strong>irreversível</strong>.
             </p>
           </div>

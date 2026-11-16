@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { apagarCurriculoSeSemUso } from "@/lib/curriculos";
+import { caminhoDoCurriculo } from "@/lib/supabase/storage";
 
 export async function GET(
   _request: NextRequest,
@@ -35,6 +37,7 @@ export async function DELETE(
   }
 
   await prisma.candidatura.delete({ where: { id } });
+  await apagarCurriculoSeSemUso(caminhoDoCurriculo(candidatura));
 
   return NextResponse.json({ ok: true });
 }

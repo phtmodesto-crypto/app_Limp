@@ -73,14 +73,36 @@ export async function gerarSignedUrl(path: string): Promise<string | null> {
 }
 
 /**
- * Deleta o arquivo de currículo do storage (usado na anonimização LGPD).
+ * Caminho do arquivo no bucket a partir do que está salvo na candidatura.
+ * Candidaturas antigas não têm curriculoStoragePath: o caminho vem da URL assinada.
  */
-export async function deletarCurriculo(path: string): Promise<void> {
+export function caminhoDoCurriculo(candidatura: {
+  curriculoUrl?: string | null;
+  curriculoStoragePath?: string | null;
+}): string | null {
+  if (candidatura.curriculoStoragePath) return candidatura.curriculoStoragePath;
+  if (!candidatura.curriculoUrl) return null;
+  try {
+    // formato: /storage/v1/object/sign/curriculos/PATH
+    const u = new URL(candidatura.curriculoUrl);
+    const match = u.pathname.match(/\/storage\/v1\/object\/sign\/curriculos\/(.+)/);
+    return match?.[1] ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Apaga arquivos de currículo do storage. Retorna quantos foram apagados.
+ */
+export async function deletarCurriculos(paths: string[]): Promise<number> {
+  if (paths.length === 0) return 0;
   const supabase = createSupabaseAdminClient();
 
-  const { error } = await supabase.storage.from(BUCKET).remove([path]);
+  const { data, error } = await supabase.storage.from(BUCKET).remove(paths);
 
   if (error) {
-    console.error(`Erro ao deletar currículo (${path}):`, error.message);
+    throw new Error(`Erro ao apagar currículos: ${error.message}`);
   }
+  return data?.length ?? 0;
 }

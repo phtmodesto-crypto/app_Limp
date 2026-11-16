@@ -44,7 +44,8 @@ export function AnonimizarButton({ candidaturaId }: Props) {
             <p className="font-bold text-red-700 text-sm">Confirmar exclusão dos dados</p>
             <p className="text-xs text-red-600 mt-1">
               Esta ação é <strong>irreversível</strong>. Todos os dados pessoais do candidato
-              serão substituídos por placeholders, em atendimento ao direito de exclusão da LGPD.
+              serão substituídos por placeholders e o currículo enviado será apagado, em atendimento
+              ao direito de exclusão da LGPD.
             </p>
           </div>
         </div>

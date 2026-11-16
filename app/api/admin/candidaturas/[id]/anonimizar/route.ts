@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { apagarCurriculoSeSemUso } from "@/lib/curriculos";
+import { caminhoDoCurriculo } from "@/lib/supabase/storage";
 
 export async function POST(
   _request: NextRequest,
@@ -37,11 +39,14 @@ export async function POST(
       curriculoUrl: null,
       curriculoNome: null,
       curriculoTipo: null,
+      curriculoTamanho: null,
+      curriculoStoragePath: null,
       anonimizado: true,
       anonimizadoEm: new Date(),
       anonimizadoPor: session.user.email || session.user.name || "admin",
     },
   });
+  await apagarCurriculoSeSemUso(caminhoDoCurriculo(candidatura));
 
   return NextResponse.json({ ok: true, mensagem: "Dados anonimizados com sucesso" });
 }
